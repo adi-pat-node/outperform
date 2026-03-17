@@ -1,0 +1,954 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Signalflow | Pipeline Intelligence Platform</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ec5b13",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221610",
+            },
+            fontFamily: {
+              display: ["Public Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Public Sans", sans-serif;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-primary {
+        transition:
+          transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.25s ease;
+      }
+      .btn-primary:hover {
+        transform: scale(1.04);
+        box-shadow: 0 22px 44px -8px rgba(236, 91, 19, 0.42);
+      }
+      .btn-primary:active {
+        transform: scale(0.97);
+      }
+
+      .btn-secondary {
+        transition:
+          transform 0.2s ease,
+          background-color 0.2s ease;
+      }
+      .btn-secondary:hover {
+        transform: scale(1.03);
+      }
+      .btn-secondary:active {
+        transform: scale(0.97);
+      }
+
+      .btn-ghost {
+        transition:
+          transform 0.2s ease,
+          background-color 0.2s ease;
+      }
+      .btn-ghost:hover {
+        transform: scale(1.03);
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      nav a {
+        position: relative;
+      }
+      nav a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #ec5b13;
+        transition: width 0.25s ease;
+      }
+      nav a:hover::after {
+        width: 100%;
+      }
+
+      .risk-bar {
+        width: 0%;
+        transition: none;
+      }
+
+      .quote-mark {
+        color: #ec5b13;
+        opacity: 0.3;
+        font-size: 6rem;
+        line-height: 1;
+      }
+
+      .step-card {
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px -8px rgba(0, 0, 0, 0.12);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased"
+  >
+    <nav
+      class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-white/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-2">
+          <div class="bg-primary p-1.5 rounded-lg">
+            <span class="material-symbols-outlined text-white text-2xl"
+              >insights</span
+            >
+          </div>
+          <span
+            class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+            >Signalflow</span
+          >
+        </div>
+        <div class="hidden lg:flex items-center gap-10">
+          <a
+            class="text-sm font-medium hover:text-primary transition-colors"
+            href="#"
+            >Platform</a
+          >
+          <a
+            class="text-sm font-medium hover:text-primary transition-colors"
+            href="#"
+            >Solutions</a
+          >
+          <a
+            class="text-sm font-medium hover:text-primary transition-colors"
+            href="#"
+            >Resources</a
+          >
+          <a
+            class="text-sm font-medium hover:text-primary transition-colors"
+            href="#"
+            >Pricing</a
+          >
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            class="hidden sm:block text-sm font-semibold hover:text-primary px-4 py-2 transition-colors"
+          >
+            Login
+          </button>
+          <button
+            class="btn-primary bg-primary text-white text-sm font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl shadow-lg shadow-primary/20"
+          >
+            Book Demo
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="relative pt-12 md:pt-20 pb-20 md:pb-32 overflow-hidden">
+      <div
+        class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+        <div class="space-y-6 md:space-y-8 text-center lg:text-left">
+          <div
+            id="hero-badge"
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+          >
+            <span class="relative flex h-2 w-2">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+              ></span>
+            </span>
+            New: Predictive Pipeline Scoring
+          </div>
+
+          <h1
+            id="hero-title"
+            class="text-4xl sm:text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-white"
+          >
+            The End of <br class="hidden sm:block" />
+            <span class="text-primary">Forecast Surprises</span>
+          </h1>
+
+          <p
+            id="hero-subtext"
+            class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed"
+          >
+            Signalflow provides real-time pipeline intelligence to stop deal
+            slippage and hit your numbers every single time. Automated,
+            predictive, and zero-friction.
+          </p>
+
+          <div id="hero-buttons" class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+            <button
+              class="btn-primary bg-primary text-white font-bold px-8 py-3.5 sm:py-4 rounded-xl shadow-xl shadow-primary/30 w-full sm:w-auto"
+            >
+              Get a Pipeline Audit
+            </button>
+            <button
+              class="btn-secondary flex items-center justify-center gap-2 bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white font-bold px-8 py-3.5 sm:py-4 rounded-xl w-full sm:w-auto"
+            >
+              <span class="material-symbols-outlined">play_circle</span>
+              Watch 2-min Demo
+            </button>
+          </div>
+        </div>
+
+        <div id="hero-card" class="relative group mt-8 lg:mt-0">
+          <div
+            class="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-transparent blur-3xl rounded-full opacity-50 group-hover:opacity-70 transition-opacity duration-500 hidden sm:block"
+          ></div>
+          <div
+            class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-5 sm:p-6 overflow-hidden"
+          >
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-bold flex items-center gap-2 text-sm sm:text-base">
+                <span class="material-symbols-outlined text-red-500"
+                  >warning</span
+                >
+                High Risk Alert
+              </h3>
+              <span class="text-[10px] sm:text-xs text-slate-400">Detected 2m ago</span>
+            </div>
+            <div class="space-y-4">
+              <div
+                class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5"
+              >
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 sm:mb-2 gap-2 sm:gap-0">
+                  <div>
+                    <p
+                      class="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-tight"
+                    >
+                      Opportunity
+                    </p>
+                    <p class="font-bold text-sm sm:text-base">Enterprise Plan - Acme Corp</p>
+                  </div>
+                  <span
+                    class="bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 text-[10px] font-black px-2 py-0.5 rounded uppercase self-start"
+                    >Slippage Risk 84%</span
+                  >
+                </div>
+
+                <div
+                  class="w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden"
+                >
+                  <div class="risk-bar bg-red-500 h-full rounded-full"></div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div
+                  class="p-3 rounded-lg border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5"
+                >
+                  <p class="text-[10px] text-slate-400 uppercase">
+                    Last Contact
+                  </p>
+                  <p class="text-sm font-bold text-red-500">14 Days Ago</p>
+                </div>
+                <div
+                  class="p-3 rounded-lg border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5"
+                >
+                  <p class="text-[10px] text-slate-400 uppercase">Sentiment</p>
+                  <p class="text-sm font-bold text-amber-500">Declining</p>
+                </div>
+              </div>
+              <div class="bg-primary/5 border border-primary/20 p-4 rounded-xl">
+                <p class="text-[10px] sm:text-xs font-bold text-primary mb-1 italic">
+                  Recommendation:
+                </p>
+                <p class="text-xs sm:text-sm leading-snug">
+                  "Executive sponsor has stopped responding. Schedule a
+                  multi-threading outreach via VP of Sales today."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="comparison-section py-16 md:py-24 bg-background-light dark:bg-background-dark"
+    >
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12 md:mb-16 space-y-4">
+          <h2
+            class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight"
+          >
+            Tired of "Spreadsheet Gymnastics"?
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Manual tracking leads to dark data. Move to automated predictive
+            intelligence.
+          </p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div
+            class="comparison-old p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/50"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <div class="bg-slate-100 dark:bg-white/10 p-2 rounded-lg">
+                <span class="material-symbols-outlined text-slate-400"
+                  >history</span
+                >
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold">The Old Way</h3>
+            </div>
+            <ul class="space-y-4 text-sm sm:text-base">
+              <li class="flex gap-3 text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-red-500 shrink-0"
+                  >close</span
+                >Manual CRM updates that reps hate and skip
+              </li>
+              <li class="flex gap-3 text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-red-500 shrink-0"
+                  >close</span
+                >"Dark data" hidden in emails and private calls
+              </li>
+              <li class="flex gap-3 text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-red-500 shrink-0"
+                  >close</span
+                >Forecasts based on "gut feeling" and optimism
+              </li>
+              <li class="flex gap-3 text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-red-500 shrink-0"
+                  >close</span
+                >Reacting to lost deals after they've slipped
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="comparison-new p-6 sm:p-8 rounded-2xl border-2 border-primary bg-primary/5 relative overflow-hidden"
+          >
+            <div
+              class="absolute top-0 right-0 bg-primary text-white text-[8px] sm:text-[10px] font-black px-3 py-1 sm:px-4 sm:py-1 rounded-bl-lg uppercase tracking-widest"
+            >
+              Recommended
+            </div>
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="bg-primary p-2 rounded-lg shadow-lg shadow-primary/20"
+              >
+                <span class="material-symbols-outlined text-white"
+                  >auto_awesome</span
+                >
+              </div>
+              <h3 class="text-lg sm:text-xl font-bold">The Signalflow Way</h3>
+            </div>
+            <ul class="space-y-4 text-sm sm:text-base">
+              <li class="flex gap-3 font-medium">
+                <span class="material-symbols-outlined text-primary shrink-0"
+                  >check_circle</span
+                >Automated tracking of every buyer touchpoint
+              </li>
+              <li class="flex gap-3 font-medium">
+                <span class="material-symbols-outlined text-primary shrink-0"
+                  >check_circle</span
+                >AI-driven sentiment and engagement scoring
+              </li>
+              <li class="flex gap-3 font-medium">
+                <span class="material-symbols-outlined text-primary shrink-0"
+                  >check_circle</span
+                >Predictive alerts 14 days before deals slip
+              </li>
+              <li class="flex gap-3 font-medium">
+                <span class="material-symbols-outlined text-primary shrink-0"
+                  >check_circle</span
+                >100% pipeline visibility for leadership
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section py-16 md:py-24 bg-slate-900 text-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-12 text-center">
+          <div class="stat-item space-y-3 md:space-y-4">
+            <div
+              class="stat-number text-5xl md:text-6xl font-black text-primary"
+              data-count="91"
+              data-suffix="%"
+              data-decimals="0"
+            >
+              0%
+            </div>
+            <h3 class="text-lg md:text-xl font-bold">Forecast Accuracy</h3>
+            <p class="text-sm md:text-base text-slate-400">
+              Eliminate the +/- 20% variance and hit your number with scientific
+              precision.
+            </p>
+          </div>
+
+          <div class="stat-item space-y-3 md:space-y-4">
+            <div
+              class="stat-number text-5xl md:text-6xl font-black text-primary"
+              data-count="34"
+              data-suffix="%"
+              data-decimals="0"
+            >
+              0%
+            </div>
+            <h3 class="text-lg md:text-xl font-bold">Rep Productivity</h3>
+            <p class="text-sm md:text-base text-slate-400">
+              Automate admin tasks so your reps can focus on selling, not data
+              entry.
+            </p>
+          </div>
+
+          <div class="stat-item space-y-3 md:space-y-4">
+            <div
+              class="stat-number text-5xl md:text-6xl font-black text-primary"
+              data-count="2.3"
+              data-suffix="x"
+              data-decimals="1"
+            >
+              0x
+            </div>
+            <h3 class="text-lg md:text-xl font-bold">Deal Velocity</h3>
+            <p class="text-sm md:text-base text-slate-400">
+              Identify bottlenecks instantly and move deals through the funnel
+              faster.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonial-section py-16 md:py-24">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <div class="flex justify-center gap-1 mb-6">
+          <span
+            class="material-symbols-outlined text-amber-400 text-xl md:text-2xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >star</span
+          >
+          <span
+            class="material-symbols-outlined text-amber-400 text-xl md:text-2xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >star</span
+          >
+          <span
+            class="material-symbols-outlined text-amber-400 text-xl md:text-2xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >star</span
+          >
+          <span
+            class="material-symbols-outlined text-amber-400 text-xl md:text-2xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >star</span
+          >
+          <span
+            class="material-symbols-outlined text-amber-400 text-xl md:text-2xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >star</span
+          >
+        </div>
+        <blockquote
+          class="text-xl sm:text-2xl md:text-3xl font-medium italic mb-8 md:mb-10 leading-relaxed text-slate-900 dark:text-slate-100"
+        >
+          "Signalflow gave us the visibility we never knew we were missing. We
+          identified $4M in at-risk pipeline in the first week. It's been a
+          game-changer for our RevOps team."
+        </blockquote>
+        <div class="flex flex-col items-center">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-slate-200 mb-3 md:mb-4 border-2 border-primary bg-cover bg-center"
+            style="
+              background-image: url(&quot;https://i.pravatar.cc/150?img=47&quot;);
+            "
+          ></div>
+          <h4 class="font-bold text-base md:text-lg">Sarah Chen</h4>
+          <p class="text-sm md:text-base text-slate-500">VP RevOps at Northwind SaaS</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="implementation-section py-16 md:py-24 bg-slate-50 dark:bg-white/2">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12 md:mb-16">
+          <h2 class="text-3xl md:text-4xl font-black mb-4">Zero-Friction Implementation</h2>
+          <p class="text-sm md:text-base text-slate-500">Up and running in minutes, not months.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="step-card p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-white/5 relative"
+          >
+            <div
+              class="text-4xl sm:text-5xl font-black text-slate-100 dark:text-white/5 absolute top-4 right-6 select-none"
+            >
+              01
+            </div>
+            <div
+              class="bg-primary/10 text-primary w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-6"
+            >
+              <span class="material-symbols-outlined">api</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Connect</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Securely sync your CRM, email, and calendar with one-click OAuth
+              integrations.
+            </p>
+          </div>
+
+          <div
+            class="step-card p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-white/5 relative"
+          >
+            <div
+              class="text-4xl sm:text-5xl font-black text-slate-100 dark:text-white/5 absolute top-4 right-6 select-none"
+            >
+              02
+            </div>
+            <div
+              class="bg-primary/10 text-primary w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-6"
+            >
+              <span class="material-symbols-outlined">schema</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Map</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Our AI automatically maps your sales stages and historical deal
+              patterns.
+            </p>
+          </div>
+
+          <div
+            class="step-card p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-white/5 relative"
+          >
+            <div
+              class="text-4xl sm:text-5xl font-black text-slate-100 dark:text-white/5 absolute top-4 right-6 select-none"
+            >
+              03
+            </div>
+            <div
+              class="bg-primary/10 text-primary w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-6"
+            >
+              <span class="material-symbols-outlined">rocket_launch</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Activate</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">
+              Get real-time alerts and predictive insights delivered directly to
+              Slack or CRM.
+            </p>
+          </div>
+        </div>
+        <div
+          class="mt-12 md:mt-16 flex flex-wrap justify-center items-center gap-6 sm:gap-8 opacity-60"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-green-500 text-sm sm:text-base"
+              >verified_user</span
+            >
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest"
+              >SOC2 Type II</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-green-500 text-sm sm:text-base"
+              >verified_user</span
+            >
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest"
+              >GDPR Compliant</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-green-500 text-sm sm:text-base"
+              >verified_user</span
+            >
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest"
+              >HIPAA Ready</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-20 px-4 sm:px-6">
+      <div
+        class="final-cta-inner max-w-5xl mx-auto bg-slate-900 dark:bg-black rounded-3xl md:rounded-[2.5rem] p-8 sm:p-12 lg:p-20 text-center relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 right-0 w-48 h-48 md:w-64 md:h-64 bg-primary/20 rounded-full blur-[80px] md:blur-[100px] -mr-24 -mt-24 md:-mr-32 md:-mt-32 pointer-events-none"
+        ></div>
+        <div
+          class="absolute bottom-0 left-0 w-48 h-48 md:w-64 md:h-64 bg-primary/10 rounded-full blur-[80px] md:blur-[100px] -ml-24 -mb-24 md:-ml-32 md:-mb-32 pointer-events-none"
+        ></div>
+        <div class="relative z-10 space-y-6 md:space-y-8">
+          <h2
+            class="text-3xl sm:text-4xl lg:text-6xl font-black text-white tracking-tight leading-tight"
+          >
+            Stop Losing Deals <br class="hidden sm:block" />
+            You Should Have Won
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto">
+            Join over 400+ high-growth revenue teams using Signalflow to drive
+            predictable growth.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button
+              class="btn-primary bg-primary text-white font-bold px-8 py-4 md:px-10 md:py-5 rounded-2xl shadow-2xl shadow-primary/40 w-full sm:w-auto"
+            >
+              Start Your Pipeline Audit
+            </button>
+            <button
+              class="btn-ghost bg-white/10 text-white font-bold px-8 py-4 md:px-10 md:py-5 rounded-2xl backdrop-blur-sm border border-white/10 w-full sm:w-auto"
+            >
+              Speak with Sales
+            </button>
+          </div>
+          <p class="text-[10px] sm:text-xs text-slate-500 uppercase font-bold tracking-widest px-4">
+            Free for teams under 5 reps &bull; No credit card required
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer
+      class="bg-slate-50 dark:bg-background-dark border-t border-slate-200 dark:border-white/5 py-16 md:py-20"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10 md:gap-12"
+      >
+        <div class="col-span-1 sm:col-span-2 space-y-6">
+          <div class="flex items-center gap-2">
+            <div class="bg-primary p-1 rounded">
+              <span class="material-symbols-outlined text-white text-xl"
+                >insights</span
+              >
+            </div>
+            <span class="text-xl font-bold text-slate-900 dark:text-white"
+              >Signalflow</span
+            >
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed max-w-xs">
+            The next-generation pipeline intelligence platform for
+            high-performance revenue teams. Built for predictability.
+          </p>
+          <div class="flex gap-4">
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+              ><span class="material-symbols-outlined">public</span></a
+            >
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+              ><span class="material-symbols-outlined">chat</span></a
+            >
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+              ><span class="material-symbols-outlined">group</span></a
+            >
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm uppercase tracking-widest">Platform</h4>
+          <ul class="space-y-3 text-sm text-slate-500">
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Forecasting</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Risk Detection</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Rep Coaching</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Integrations</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm uppercase tracking-widest">Resources</h4>
+          <ul class="space-y-3 text-sm text-slate-500">
+            <li>
+              <a class="hover:text-primary transition-colors" href="#">Blog</a>
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Revenue Playbooks</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Documentation</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Security</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm uppercase tracking-widest">Company</h4>
+          <ul class="space-y-3 text-sm text-slate-500">
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >About Us</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Careers</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#">Press</a>
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm uppercase tracking-widest">Legal</h4>
+          <ul class="space-y-3 text-sm text-slate-500">
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Privacy Policy</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Terms of Service</a
+              >
+            </li>
+            <li>
+              <a class="hover:text-primary transition-colors" href="#"
+                >Cookie Policy</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="max-w-7xl mx-auto px-6 mt-12 md:mt-20 pt-8 border-t border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center md:items-start gap-4 text-center md:text-left text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-widest"
+      >
+        <p>
+          &copy; <span id="footer-year"></span> Signalflow Intelligence Inc. All
+          rights reserved.
+        </p>
+        <p>Built with precision for revenue leaders.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("footer-year").textContent =
+        new Date().getFullYear();
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.querySelector(".risk-bar").style.width = "84%";
+        document.querySelectorAll(".stat-number").forEach(function (el) {
+          el.textContent = el.dataset.count + el.dataset.suffix;
+        });
+      } else {
+        gsap.registerPlugin(ScrollTrigger);
+
+        var heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        heroTl
+
+          .from("#hero-badge", { opacity: 0, y: -18, duration: 0.55 })
+
+          .from("#hero-title", { opacity: 0, y: 36, duration: 0.72 }, "-=0.15")
+
+          .from("#hero-subtext", { opacity: 0, y: 24, duration: 0.65 }, "-=0.3")
+
+          .from(
+            "#hero-buttons",
+            { opacity: 0, y: 20, duration: 0.55 },
+            "-=0.25",
+          )
+
+          .from(
+            "#hero-card",
+            {
+              opacity: 0,
+              x: 56,
+              scale: 0.96,
+              duration: 0.85,
+              ease: "power2.out",
+            },
+            "-=0.45",
+          )
+
+          .to(
+            ".risk-bar",
+            {
+              width: "84%",
+              duration: 1.1,
+              ease: "power2.out",
+            },
+            "-=0.35",
+          );
+
+        var compTrigger = {
+          trigger: ".comparison-section",
+          start: "top 75%",
+          once: true,
+        };
+
+        gsap.from(".comparison-old", {
+          scrollTrigger: compTrigger,
+          opacity: 0,
+          x: -44,
+          duration: 0.72,
+          ease: "power2.out",
+        });
+        gsap.from(".comparison-new", {
+          scrollTrigger: compTrigger,
+          opacity: 0,
+          x: 44,
+          duration: 0.72,
+          ease: "power2.out",
+          delay: 0.1,
+        });
+
+        document.querySelectorAll(".stat-number").forEach(function (el, i) {
+          var target = parseFloat(el.dataset.count);
+          var suffix = el.dataset.suffix || "";
+          var decimals = parseInt(el.dataset.decimals || "0", 10);
+          var counter = { val: 0 };
+
+          gsap.from(el.closest(".stat-item"), {
+            scrollTrigger: {
+              trigger: ".stats-section",
+              start: "top 78%",
+              once: true,
+            },
+            opacity: 0,
+            y: 32,
+            duration: 0.65,
+            ease: "power2.out",
+            delay: i * 0.14,
+          });
+
+          gsap.to(counter, {
+            val: target,
+            duration: 2.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".stats-section",
+              start: "top 78%",
+              once: true,
+            },
+            delay: i * 0.14,
+            onUpdate: function () {
+              el.textContent =
+                (decimals > 0
+                  ? counter.val.toFixed(decimals)
+                  : Math.floor(counter.val)) + suffix;
+            },
+            onComplete: function () {
+              el.textContent =
+                (decimals > 0 ? target.toFixed(decimals) : target) + suffix;
+            },
+          });
+        });
+
+        gsap.from(".testimonial-section", {
+          scrollTrigger: {
+            trigger: ".testimonial-section",
+            start: "top 82%",
+            once: true,
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+
+        gsap.from(".step-card", {
+          scrollTrigger: {
+            trigger: ".implementation-section",
+            start: "top 72%",
+            once: true,
+          },
+          opacity: 0,
+          y: 42,
+          duration: 0.7,
+          stagger: 0.15,
+          ease: "power2.out",
+        });
+
+        gsap.from(".final-cta-inner", {
+          scrollTrigger: {
+            trigger: ".final-cta-inner",
+            start: "top 80%",
+            once: true,
+          },
+          opacity: 0,
+          scale: 0.96,
+          duration: 0.75,
+          ease: "power2.out",
+        });
+      }
+    </script>
+  </body>
+</html>
